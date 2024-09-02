@@ -58,4 +58,4 @@ const getPedidos = async (req, res) => {
 
 
 
-module.exports = { getWaiters,getProduct };
+module.exports = { getWaiters,getProduct ,getMesa,getPedidos,getAdmin};
