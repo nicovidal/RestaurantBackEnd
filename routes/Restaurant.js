@@ -1,9 +1,12 @@
 const { Router } = require("express");
-const {getWaiters}=require('../controllers/Gets.js')
+const {getWaiters, getProduct, getMesa, getAdmin, getPedidos}=require('../controllers/Gets.js')
 const router = Router();
 
 
-//GetTasks
 router.get("/waiters", getWaiters);
+router.get("/product", getProduct);
+router.get("/mesa", getMesa);
+router.get("/admin", getAdmin);
+router.get("/pedidos", getPedidos);
 
 module.exports = router;
