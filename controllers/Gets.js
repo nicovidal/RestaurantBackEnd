@@ -16,7 +16,7 @@ const getWaiters = async (req, res) => {
 
 const getProduct = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM Product');
+    const result = await pool.query('SELECT * FROM product');
     res.json(result.rows); 
   } catch (error) {
     console.error('Error fetching data:', error);
