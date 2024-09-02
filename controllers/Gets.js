@@ -3,7 +3,7 @@ const { pool } = require('../database/config');
 
 const getWaiters = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM waiters');
+    const result = await pool.query('SELECT * FROM waiter');
     res.json(result.rows); 
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -56,4 +56,4 @@ const getPedidos = async (req, res) => {
 
 
 
-module.exports = { getWaiters,getProduct };
+module.exports = {getWaiters,getProduct,getMesa,getAdmin,getPedidos};
