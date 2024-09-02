@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const {getWaiters}=require('../controllers/WaiterControl.js')
+const {getWaiters}=require('../controllers/Gets.js')
 const router = Router();
 
 

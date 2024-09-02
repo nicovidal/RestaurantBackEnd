@@ -1,0 +1,32 @@
+create table waiter(
+	id_waiter int,
+	name_waiter char,
+	PRIMARY KEY (id_waiter)
+);
+
+
+create table product(
+	id_product int,
+	name_product char,
+	price int,
+	PRIMARY KEY (id_product)
+);
+
+create table mesa(
+	id_mesa int,
+	name_mesa char,
+	PRIMARY KEY (id_mesa)
+);
+
+create table admin(
+	id_admin int,
+	name_admin char,
+	PRIMARY KEY (id_admin)
+);
+
+create table pedidos(
+	id_pedido int,
+	nombre_pedido char,
+	total_pedido int,
+	PRIMARY KEY (id_pedido)
+);
