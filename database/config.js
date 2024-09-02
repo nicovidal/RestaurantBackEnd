@@ -23,5 +23,6 @@ const dbConnection = async () => {
 
 module.exports = {
   dbConnection,
-  pool, 
+  pool
+
 };

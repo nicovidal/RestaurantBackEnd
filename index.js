@@ -7,12 +7,25 @@ const app = express();
 /* coneccionDB */
 dbConnection()
 
-app.listen(process.env.PORT, () => {
-  console.log(`Servidor en puerto ${process.env.PORT}`);
-});
 
 
 //parse bod
 app.use(express.json());
 
 app.use(express.static("public"));
+
+
+//routes
+app.use("/api/restaurant", require("./routes/Restaurant"))
+
+
+
+app.listen(process.env.PORT, () => {
+  console.log(`Servidor en puerto ${process.env.PORT}`);
+});
+
+
+
+
+
+
