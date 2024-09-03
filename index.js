@@ -3,11 +3,11 @@ require("dotenv").config();
 const {dbConnection}=require('./database/config')
 
 const app = express();
-
+const cors = require("cors");
 /* coneccionDB */
 dbConnection()
 
-
+app.use(cors());
 
 //parse bod
 app.use(express.json());
