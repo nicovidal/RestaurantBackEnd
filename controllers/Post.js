@@ -48,13 +48,13 @@ const addMesa=async(req,res)=>{
 
 
 const addProduct= async (req,res)=>{
-  const {name_product,price}=req.body
+  const {name_product,price,categoria_id}=req.body
 
   try {
 
     const result=await pool.query(
-      'INSERT INTO product (name_product, price) VALUES ($1, $2) RETURNING *',
-      [name_product,price]
+      'INSERT INTO product (name_product, price,categoria_id) VALUES ($1, $2,$3) RETURNING *',
+      [name_product,price,categoria_id]
     )
 
     const newProduct= result.rows[0]
@@ -68,7 +68,9 @@ const addProduct= async (req,res)=>{
 }
 
 const addPedido = async (req, res) => {
-  const { bebida, comida, mesa_id, camarero_id, total_pedido } = req.body;
+  const { bebida, comida, mesa_id, genero, fin, camarero_id, total_pedido } = req.body;
+  const inicio = new Date(); // Obtiene la fecha y hora actuales
+
 
   try {
     const mesaResult = await pool.query('SELECT id_mesa FROM mesa WHERE id_mesa = $1', [mesa_id]);
@@ -76,16 +78,20 @@ const addPedido = async (req, res) => {
       return res.status(400).json({ error: 'La mesa no existe' });
     }
 
-    const waiterResult=await pool.query('SELECT id FROM waiter where id=$1',[camarero_id]);
-    if(waiterResult.rowCount===0){
-      return res.status(400).json({error:'Camarero no existe'})
+    const waiterResult = await pool.query('SELECT id FROM waiter WHERE id = $1', [camarero_id]);
+    if (waiterResult.rowCount === 0) {
+      return res.status(400).json({ error: 'Camarero no existe' });
     }
+
     const result = await pool.query(
-      'INSERT INTO pedidos (bebida, comida, mesa_id, camarero_id, total_pedido) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      'INSERT INTO pedidos (bebida, comida, mesa_id, genero, inicio, fin, camarero_id, total_pedido) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [
-        JSON.stringify(bebida), 
-        JSON.stringify(comida),  
+        JSON.stringify(bebida),
+        JSON.stringify(comida),
         mesa_id,
+        genero,
+        inicio, 
+        fin, 
         camarero_id,
         total_pedido,
       ]
@@ -100,6 +106,8 @@ const addPedido = async (req, res) => {
     res.status(500).json({ error: 'Error al agregar el pedido' });
   }
 };
+
+
 
 
 module.exports={addWaiter,addMesa,addProduct,addPedido}

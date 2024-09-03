@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const {getWaiters, getProduct, getMesa, getAdmin, getPedidos, getCategoria}=require('../controllers/Gets.js');
 const { addWaiter, addMesa, addProduct, addPedido } = require("../controllers/Post.js");
+const { finishPedido } = require("../controllers/Update.js");
 const router = Router();
 
 
@@ -18,5 +19,9 @@ router.post("/addWaiter",addWaiter)
 router.post("/addMesa",addMesa)
 router.post("/addProduct",addProduct)
 router.post("/addPedido",addPedido)
+
+
+
+router.put("/finishPedido",finishPedido)
 
 module.exports = router;
