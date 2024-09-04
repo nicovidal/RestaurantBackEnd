@@ -71,18 +71,20 @@ const addPedido = async (req, res) => {
   const { bebida, comida, mesa_id, genero, fin, camarero_id, total_pedido } = req.body;
   const inicio = new Date(); // Obtiene la fecha y hora actuales
 
-
   try {
+    // Verifica que la mesa existe
     const mesaResult = await pool.query('SELECT id_mesa FROM mesa WHERE id_mesa = $1', [mesa_id]);
     if (mesaResult.rowCount === 0) {
       return res.status(400).json({ error: 'La mesa no existe' });
     }
 
+    // Verifica que el camarero existe
     const waiterResult = await pool.query('SELECT id FROM waiter WHERE id = $1', [camarero_id]);
     if (waiterResult.rowCount === 0) {
       return res.status(400).json({ error: 'Camarero no existe' });
     }
 
+    // Inserta el nuevo pedido
     const result = await pool.query(
       'INSERT INTO pedidos (bebida, comida, mesa_id, genero, inicio, fin, camarero_id, total_pedido) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [
@@ -90,14 +92,21 @@ const addPedido = async (req, res) => {
         JSON.stringify(comida),
         mesa_id,
         genero,
-        inicio, 
-        fin, 
+        inicio,
+        fin,
         camarero_id,
         total_pedido,
       ]
     );
 
     const newPedido = result.rows[0];
+
+    // Actualiza el estado de la mesa a "pedido tomado"
+    await pool.query(
+      'UPDATE mesa SET estado_mesa = $1 WHERE id_mesa = $2',
+      ['pedido tomado', mesa_id]
+    );
+
     res.status(201).json(newPedido);
 
   } catch (error) {
@@ -106,6 +115,7 @@ const addPedido = async (req, res) => {
     res.status(500).json({ error: 'Error al agregar el pedido' });
   }
 };
+
 
 
 

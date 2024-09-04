@@ -27,5 +27,65 @@ const finishPedido = async (req, res) => {
   }
 };
 
-module.exports = { finishPedido };
+
+const updateStateMesa = async (req, res) => {
+  const { id_mesa } = req.body;
+
+  try {
+    const updatedMesa = await pool.query(
+      "UPDATE mesa SET estado_mesa = 'Libre' WHERE id_mesa = $1 RETURNING *",
+      [id_mesa]
+    );
+
+    if (updatedMesa.rowCount === 0) {
+      return res.status(404).json({ message: "Mesa no encontrada" });
+    }
+
+    res.status(200).json({ message: "Estado de la mesa actualizado", mesa: updatedMesa.rows[0] });
+  } catch (error) {
+    console.error("Error al actualizar el estado de la mesa:", error);
+    res.status(500).json({ message: "Error al actualizar el estado de la mesa" });
+  }
+};
+
+
+const updateStateFinPedido = async (req, res) => {
+  const { id_pedido } = req.body;
+
+  try {
+
+    const updatedPedido = await pool.query(
+      "UPDATE pedidos SET fin = NOW() WHERE id_pedido = $1 RETURNING mesa_id",
+      [id_pedido]
+    );
+
+    if (updatedPedido.rowCount === 0) {
+      return res.status(404).json({ message: "Pedido no encontrado" });
+    }
+
+    const mesaId = updatedPedido.rows[0].mesa_id;
+
+    const updatedMesa = await pool.query(
+      "UPDATE mesa SET estado_mesa = 'Por pagar' WHERE id_mesa = $1 RETURNING *",
+      [mesaId]
+    );
+
+    if (updatedMesa.rowCount === 0) {
+      return res.status(404).json({ message: "Mesa no encontrada" });
+    }
+
+    res.status(200).json({
+      message: "Estado del pedido y de la mesa actualizados",
+      pedido: updatedPedido.rows[0],
+      mesa: updatedMesa.rows[0],
+    });
+  } catch (error) {
+    console.error("Error al actualizar el estado del pedido y de la mesa:", error);
+    res.status(500).json({ message: "Error al actualizar el estado del pedido y de la mesa" });
+  }
+};
+
+
+
+module.exports = { finishPedido,updateStateMesa ,updateStateFinPedido};
 
