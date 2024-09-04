@@ -70,7 +70,6 @@ const showPedido = async (req, res) => {
   console.log("ID de la mesa recibido:", id_mesa);
 
   try {
-    // Obtén el último pedido asociado a la mesa
     const resultPedido = await pool.query(
       `SELECT * FROM pedidos 
        WHERE mesa_id = $1 
@@ -85,12 +84,9 @@ const showPedido = async (req, res) => {
 
     const pedido = resultPedido.rows[0];
 
-    // Obtén los ids de los productos de comida y bebida
     const idsComida = pedido.comida ? pedido.comida.map(item => parseInt(item.id, 10)) : [];
     const idsBebida = pedido.bebida ? pedido.bebida.map(item => parseInt(item.id, 10)) : [];
 
-    console.log("IDs de comida:", idsComida);
-    console.log("IDs de bebida:", idsBebida);
 
     // Si hay ids de productos, haz las consultas
     const resultComida = idsComida.length > 0 ? await pool.query(
@@ -106,13 +102,10 @@ const showPedido = async (req, res) => {
     console.log("Productos de comida:", resultComida.rows);
     console.log("Productos de bebida:", resultBebida.rows);
 
-    // Combina los resultados en un solo array
     const productos = [...resultComida.rows, ...resultBebida.rows];
 
-    // Crea un mapa para facilitar la búsqueda
     const productosMap = new Map(productos.map(p => [p.id_product, p]));
 
-    // Mapea los productos de comida y bebida con la información del nombre y precio
     pedido.comida = pedido.comida ? pedido.comida.map(item => ({
       ...item,
       name_product: productosMap.get(parseInt(item.id, 10))?.name_product || 'Desconocido',
