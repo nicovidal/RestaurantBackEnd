@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const {getWaiters, getProduct, getMesa, getAdmin, getPedidos, getCategoria}=require('../controllers/Gets.js');
+const {getWaiters, getProduct, getMesa, getAdmin, getPedidos, getCategoria, showPedido}=require('../controllers/Gets.js');
 const { addWaiter, addMesa, addProduct, addPedido } = require("../controllers/Post.js");
 const { finishPedido, updateStateMesa, updateStateFinPedido } = require("../controllers/Update.js");
 const router = Router();
@@ -11,6 +11,8 @@ router.get("/mesa", getMesa);
 router.get("/admin", getAdmin);
 router.get("/pedidos", getPedidos);
 router.get("/categoria", getCategoria);
+router.get("/verPedido",showPedido)
+
 
 
 
