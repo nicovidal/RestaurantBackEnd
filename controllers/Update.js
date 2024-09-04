@@ -50,24 +50,32 @@ const updateStateMesa = async (req, res) => {
 
 
 const updateStateFinPedido = async (req, res) => {
-  const { id_pedido } = req.body;
+  const { id_mesa } = req.body;
+  console.log("ID de la mesa recibido:", id_mesa); // Imprime el ID de la mesa recibido
 
   try {
+    // Consulta el último pedido asociado a la mesa
+    const lastPedidoResult = await pool.query(
+      "SELECT id_pedido FROM pedidos WHERE mesa_id = $1 ORDER BY inicio DESC LIMIT 1",
+      [id_mesa]
+    );
 
-    const updatedPedido = await pool.query(
-      "UPDATE pedidos SET fin = NOW() WHERE id_pedido = $1 RETURNING mesa_id",
+    if (lastPedidoResult.rowCount === 0) {
+      return res.status(404).json({ message: "No se encontraron pedidos para esta mesa" });
+    }
+
+    const id_pedido = lastPedidoResult.rows[0].id_pedido;
+
+    // Actualiza el pedido a 'fin'
+    await pool.query(
+      "UPDATE pedidos SET fin = NOW() WHERE id_pedido = $1",
       [id_pedido]
     );
 
-    if (updatedPedido.rowCount === 0) {
-      return res.status(404).json({ message: "Pedido no encontrado" });
-    }
-
-    const mesaId = updatedPedido.rows[0].mesa_id;
-
+    // Actualiza el estado de la mesa a 'Por pagar'
     const updatedMesa = await pool.query(
       "UPDATE mesa SET estado_mesa = 'Por pagar' WHERE id_mesa = $1 RETURNING *",
-      [mesaId]
+      [id_mesa]
     );
 
     if (updatedMesa.rowCount === 0) {
@@ -75,8 +83,8 @@ const updateStateFinPedido = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Estado del pedido y de la mesa actualizados",
-      pedido: updatedPedido.rows[0],
+      message: "Estado del último pedido y de la mesa actualizados",
+      pedido: id_pedido, // Solo el ID del pedido actualizado
       mesa: updatedMesa.rows[0],
     });
   } catch (error) {
@@ -84,6 +92,7 @@ const updateStateFinPedido = async (req, res) => {
     res.status(500).json({ message: "Error al actualizar el estado del pedido y de la mesa" });
   }
 };
+
 
 
 
